@@ -54,7 +54,7 @@ jobs:
 
       - name: Generate icons
         run: |
-          npm run package:minify-changed-svgs
+          npm run package:minify-all-svgs
 
       - name: Generate Aperta Tokens zip
         uses: edgarrc/action-7z@v1

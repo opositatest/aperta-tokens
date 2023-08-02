@@ -182,7 +182,7 @@ const getUrlsForIcons = async (apiData, iconNodes) => {
 };
 
 const getSVGs = async (apiData, iconNodes) => {
-  console.log(`Descagando ${iconNodes.length} iconos...`);
+  console.log(`Descargando ${iconNodes.length} iconos...`);
 
   return Promise.all(
     iconNodes.map(async (nodeItem) => {
