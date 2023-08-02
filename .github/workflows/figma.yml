@@ -1,0 +1,38 @@
+name: Generate PR from Figma
+
+on:
+  repository_dispatch:
+    types: update-tokens
+run-name: Generate PR from Figma
+jobs:
+  build:
+    name: Create a PR from posted Figma design tokens
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-output name=date_title::$(date +'%d/%m/%Y - %H:%M:%S')"
+          echo "::set-output name=date_branch::$(date +'%d-%m-%Y-%H-%M-%S')"
+
+      - name: Repository checkout
+        uses: actions/checkout@v3
+
+      - name: Create JSON from request body
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: figma.json
+          json: ${{ github.event.client_payload.tokens }}
+          dir: './src/tokens'
+
+      - name: Create PR 
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "feature: tokens updated from Figma"
+          title: "[US] Design tokens updated ${{ steps.date.outputs.date_title }}"
+          body: "Design tokens have been updated via Figma and need to be reviewed"
+          branch: update-tokens-${{ steps.date.outputs.date_branch }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GH_OAUTH_TOKEN}}
+          BRANCH_NAME: 'main'
