@@ -1,0 +1,11 @@
+{
+  "narrow": {
+    "value": "680px"
+  },
+  "medium": {
+    "value": "880px"
+  },
+  "wide": {
+    "value": "1032px"
+  }
+}
