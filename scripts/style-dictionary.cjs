@@ -2,7 +2,7 @@ module.exports = {
   source: [`./dist/tokens/tokens.json`],
   format: {
     aperta: function ({ dictionary, platform }) {
-      const capizalizeHex = (str) => {
+      const capitalizeHex = (str) => {
         if (isNaN(str) && str.indexOf('#') !== -1) {
           const regexp = /#(([0-9a-fA-F]{2}){3,4}|([0-9a-fA-F]){3,4})/g;
           const colors = str.match(regexp);
@@ -16,7 +16,7 @@ module.exports = {
       const convertToMultipleKeys = (token) => {
         const values = [];
         for (const value in token.value) {
-          values.push(`${prefix}${token.name}-${value}: ${capizalizeHex(token.value[value])};`);
+          values.push(`${prefix}${token.name}-${value}: ${capitalizeHex(token.value[value])};`);
         }
 
         return values.join('\n');
@@ -33,6 +33,7 @@ module.exports = {
         footer = '';
       }
 
+      console.log(dictionary.allTokens);
       const variables = dictionary.allTokens.map((token) => {
         if (typeof token.value === 'object') {
           if (platform.transformGroup === 'css') {
@@ -42,7 +43,7 @@ module.exports = {
           }
         }
 
-        return `${prefix}${token.name}: ${capizalizeHex(token.value)};`;
+        return `${prefix}${token.name}: ${capitalizeHex(token.value)};`;
       });
 
       return `${header}${variables.join('\n')}${footer}`;

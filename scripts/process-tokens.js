@@ -34,21 +34,27 @@ for (const groupName in figmaTokens.effect.shadow) {
   };
 }
 
-processedTokens.fonts = {};
+processedTokens.font = {};
 for (const groupName in figmaTokens.font) {
   for (const fontName in figmaTokens.font[groupName]) {
     const font = figmaTokens.font[groupName][fontName];
     const fontType = fontName.split(' | ');
-    if (!processedTokens.fonts[fontType[0]]) {
-      processedTokens.fonts[fontType[0]] = {};
+    if (!processedTokens.font[fontType[0]]) {
+      processedTokens.font[fontType[0]] = {};
     }
     if (fontType.length === 1) {
-      processedTokens.fonts[fontType[0]] = {
-        desktop: font.value,
-        mobile: font.value,
+      processedTokens.font[fontType[0]] = {
+        desktop: {
+          value: font.value,
+        },
+        mobile: {
+          value: font.value,
+        },
       };
     } else {
-      processedTokens.fonts[fontType[0]][fontType[1]] = font.value;
+      processedTokens.font[fontType[0]][fontType[1]] = {
+        value: font.value,
+      };
     }
   }
 }
