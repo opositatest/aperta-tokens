@@ -30,8 +30,13 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "feature: tokens updated from Figma"
-          title: "[US] Design tokens updated ${{ steps.date.outputs.date_title }}"
-          body: "Design tokens have been updated via Figma and need to be reviewed"
+          title: "[FIGMA] Design tokens updated ${{ steps.date.outputs.date_title }}"
+          body: |
+            Se han actualizado los Design Tokens desde Figma\nRecuerda actualizar la versión del package.json antes
+            
+            **Recuerda actualizar la versión del [package.json][1]**
+
+            [1]: https://github.com/opositatest/aperta-tokens/blob/main/package.json
           branch: update-tokens-${{ steps.date.outputs.date_branch }}
         env:
           GITHUB_TOKEN: ${{secrets.GH_OAUTH_TOKEN}}
