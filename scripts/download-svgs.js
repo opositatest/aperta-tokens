@@ -47,7 +47,10 @@ const generateApiData = () => {
 
 const getFileDataFromApi = async (apiHeaders) => {
   try {
-    return await axios.get(`${FIGMA_API_BASE_URL}/v1/files/${apiHeaders.FILE_KEY}/nodes?ids=${encodeURI(apiHeaders.NODE_ID)}`, apiHeaders.API_HEADERS);
+    return await axios.get(
+      `${FIGMA_API_BASE_URL}/v1/files/${apiHeaders.FILE_KEY}/nodes?ids=${encodeURI(apiHeaders.NODE_ID)}`,
+      apiHeaders.API_HEADERS,
+    );
   } catch (err) {
     console.log(errorTxt(`Error al cargar datos de la API de Figma: ${err}`));
     process.exit(9);
@@ -73,7 +76,7 @@ const parseFileData = (response, node_id) => {
     const frames = [];
     nodes
       .filter((item) => {
-        return item.type === 'FRAME' && item.children.length !== 0 && item.name !== 'UI - Por añadir a tokens';
+        return item.type === 'SECTION' && item.name === 'Categorías';
       })
       .forEach((item) => {
         frames.push(item);
@@ -82,12 +85,15 @@ const parseFileData = (response, node_id) => {
     let childNodes = [];
     frames.forEach((item) => {
       if (item.children && item.children[1] && item.children[1].children) {
-        if (item.name === 'Categorías oposiciones') {
+        if (item.name === 'Categorías') {
           item.children[1].children[0].children?.forEach((child) => {
             child.children.forEach((subchild) => {
-              // subchild.parentFrameName = generateName(item.name);
-              subchild.parentFrameName = generateName(item.children[0].children[0].characters);
-              childNodes.push(subchild);
+              if (subchild.name !== 'Data' && subchild.name !== '.Documentation / Component') {
+                // console.log(subchild);
+                // subchild.parentFrameName = generateName(item.name);
+                subchild.parentFrameName = generateName(item.children[0].children[0].characters);
+                childNodes.push(subchild);
+              }
             });
           });
         } else {
@@ -100,20 +106,41 @@ const parseFileData = (response, node_id) => {
       }
     });
 
+    const iconColors = [];
     const iconNodes = [];
     childNodes = childNodes.filter((item) => {
-      
-      return item.type === 'FRAME' && (item.name.charAt(0) === '.' || item.name === 'Content') && item.name !== 'System / Heading Variant';
+      return (
+        item.type === 'FRAME' &&
+        (item.name.charAt(0) === '.' || item.name === 'Content') &&
+        item.name !== 'System / Heading Variant' &&
+        item.name !== 'System / Heading Variant'
+      );
     });
 
+    let hasColor = false;
     childNodes.forEach((item) => {
       item.children.forEach((child) => {
-        if (child.name.indexOf('Iconos / Color-Oposiciones') === -1 && (child.type === 'INSTANCE' || child.type === 'COMPONENT')) {
+        console.log(child);
+        // console.log(child);
+        if (child.type === 'FRAME') {
+          if (child?.children[0]?.characters && child?.children[0]?.characters.indexOf('_color') !== -1) {
+            hasColor = true;
+          }
+        }
+
+        if ((child.type === 'INSTANCE' || child.type === 'COMPONENT') && child.name.indexOf('Color-Oposiciones') !== -1) {
           child.parentFrameName = item.parentFrameName;
           iconNodes.push(child);
+
+          if (hasColor) {
+            iconColors.push(generateName(child.name));
+            hasColor = false;
+          }
         }
       });
     });
+
+    // console.log(iconColors);
 
     iconNodes.forEach((item) => {
       // console.log(item);
@@ -140,8 +167,10 @@ const exportFigmaNodesAsFiles = async (apiData, nodes, format, scale) => {
 
   try {
     const response = await axios.get(
-      FIGMA_API_BASE_URL + `/v1/images/${apiData.FILE_KEY}` + `?ids=${iconDataIds.join(',')}&scale=1&format=svg&svg_simplify_stroke=false&use_absolute_bounds=false`,
-      apiData.API_HEADERS
+      FIGMA_API_BASE_URL +
+        `/v1/images/${apiData.FILE_KEY}` +
+        `?ids=${iconDataIds.join(',')}&scale=1&format=svg&svg_simplify_stroke=false&use_absolute_bounds=false`,
+      apiData.API_HEADERS,
     );
     return response.data.images;
   } catch (err) {
@@ -188,11 +217,13 @@ const getSVGs = async (apiData, iconNodes) => {
     iconNodes.map(async (nodeItem) => {
       if (nodeItem.url) {
         const svgName = generateName(nodeItem.name);
+        // console.log(svgName);
+        // console.log(nodeItem);
         try {
           const svgFileResponse = await axios.get(nodeItem.url, apiData.API_HEADERS);
-          console.log(`Descargado ${svgName}.svg`);
+          // console.log(`Descargado ${svgName}.svg`);
 
-          const fileFolder = `${SRC_FOLDER}${nodeItem.category}/`;
+          /* const fileFolder = `${SRC_FOLDER}${nodeItem.category}/`;
           if (!fs.existsSync(fileFolder)) {
             fs.mkdirSync(fileFolder, { recursive: true });
           }
@@ -203,7 +234,7 @@ const getSVGs = async (apiData, iconNodes) => {
             } else {
               console.log(`Guardado ${svgName}.svg`);
             }
-          });
+          }); */
         } catch (err) {
           console.log(`Error al guardar el icono: ${svgName}.svg`);
           process.exit(9);
@@ -211,7 +242,7 @@ const getSVGs = async (apiData, iconNodes) => {
       }
 
       return nodeItem;
-    })
+    }),
   );
 };
 
