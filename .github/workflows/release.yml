@@ -47,6 +47,15 @@ jobs:
         run: |
           npm i
 
+      - name: Generate tokens
+        run: |
+          npm run package:process-tokens
+          npm run package:style-dictionary
+
+      - name: Generate icons
+        run: |
+          npm run package:minify-all-svgs
+
       - name: Copy package.json
         uses: canastro/copy-file-action@master
         with:
