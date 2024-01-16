@@ -56,16 +56,9 @@ jobs:
         run: |
           npm run package:minify-all-svgs
 
-      - name: Copy package.json
-        uses: canastro/copy-file-action@master
-        with:
-          source: "./package.json"
-          target: "./dist/package.json"
-  
-      - name: Generate .npmrc
+      - name: Prepare for distribution
         run: |
-            echo @opositatest:registry=https://npm.pkg.github.com > dist/.npmrc
-            echo '//npm.pkg.github.com/:_authToken=${GH_OAUTH_TOKEN}' >> dist/.npmrc
+          npm run package:prepare
 
       - name: Generate Aperta Tokens zip
         uses: edgarrc/action-7z@v1
@@ -77,6 +70,11 @@ jobs:
         with:
           artifacts: 'aperta-tokens.zip'
           tag: "v${{ steps.package-version.outputs.current-version}}"
+
+      - name: Generate .npmrc
+        run: |
+          echo @opositatest:registry=https://npm.pkg.github.com > dist/.npmrc
+          echo '//npm.pkg.github.com/:_authToken=${GH_OAUTH_TOKEN}' >> dist/.npmrc
 
       - name: Publish package
         run: npm publish
