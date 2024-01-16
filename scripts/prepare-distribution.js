@@ -16,19 +16,19 @@ const jsonReader = (filePath, cb) => {
 };
 
 fs.copyFile('package.json', jsonPath, () => {
-  jsonReader(jsonPath, (err, package) => {
+  jsonReader(jsonPath, (err, packageJson) => {
     if (err) {
       throw err;
     }
 
-    delete package.devDependencies;
-    delete package.scripts;
+    delete packageJson.devDependencies;
+    delete packageJson.scripts;
 
-    package.main = package.main.split('dist/').join('');
-    package.style = package.style.split('dist/').join('');
-    package.files = ['./*'];
+    packageJson.main = packageJson.main.split('dist/').join('');
+    packageJson.style = packageJson.style.split('dist/').join('');
+    packageJson.files = ['./*'];
 
-    let processedJson = JSON.stringify(package, null, '\t').split('dist/').join('');
+    let processedJson = JSON.stringify(packageJson, null, '\t').split('dist/').join('');
     fs.writeFile(jsonPath, processedJson, (err) => {
       if (err) {
         throw err;
