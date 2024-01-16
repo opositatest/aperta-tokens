@@ -1,12 +1,14 @@
 {
   "name": "@opositatest/aperta-tokens",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "OpositaTest (https://opositatest.com/)",
   "type": "module",
   "license": "UNLICENSED",
   "description": "OpositaTest Design System tokens",
   "homepage": "https://github.com/opositatest/aperta-tokens#readme",
   "bugs": "https://github.com/opositatest/aperta-tokens/issues",
+  "main": "tokens/tokens.scss",
+	"style": "tokens/tokens.scss",
   "repository": {
     "type": "git",
     "url": "https://github.com/opositatest/aperta-tokens.git"
@@ -15,7 +17,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "files": [
-    "dist/"
+    "./"
   ],
   "scripts": {
     "package:download-svgs": "node ./scripts/download-svgs.js",
