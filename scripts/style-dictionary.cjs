@@ -13,10 +13,42 @@ module.exports = {
         return str;
       };
 
+      const rem = (px) => `${px / 16}rem`;
+
+      const mobileFonts = [];
+      const convertFonts = (token) => {
+        if (token.path.includes('desktop')) {
+          const values = [];
+          for (const value in token.value) {
+            values.push(
+              `${prefix}${token.name.split('-desktop').join('')}-${value}: ${capitalizeHex(
+                value === 'weight' ? token.value[value] : rem(token.value[value]),
+              )};`,
+            );
+          }
+
+          return values.join('\n');
+        } else {
+          const values = [];
+          for (const value in token.value) {
+            values.push(
+              `${prefix}${token.name.split('-mobile').join('')}-${value}: ${capitalizeHex(
+                value === 'weight' ? token.value[value] : rem(token.value[value]),
+              )};`,
+            );
+          }
+          mobileFonts.push(values.join('\n\t'));
+        }
+      };
+
       const convertToMultipleKeys = (token) => {
         const values = [];
         for (const value in token.value) {
-          values.push(`${prefix}${token.name}-${value}: ${capitalizeHex(token.value[value])};`);
+          values.push(
+            `${prefix}${token.name}-${value}: ${capitalizeHex(
+              token.name.includes('spacing') ? rem(token.value[value]) : token.value[value],
+            )};`,
+          );
         }
 
         return values.join('\n');
@@ -33,18 +65,35 @@ module.exports = {
         footer = '';
       }
 
-      console.log(dictionary.allTokens);
+      let breakpoint = 0;
+
       const variables = dictionary.allTokens.map((token) => {
         if (typeof token.value === 'object') {
           if (platform.transformGroup === 'css') {
-            return convertToMultipleKeys(token);
+            if (token.path.includes('font')) {
+              return convertFonts(token);
+            } else {
+              return convertToMultipleKeys(token);
+            }
           } else if (platform.transformGroup === 'scss' && !Array.isArray(token.value)) {
             return convertToMultipleKeys(token);
           }
         }
 
-        return `${prefix}${token.name}: ${capitalizeHex(token.value)};`;
+        if (token.name === 'breakpoints-s') {
+          breakpoint = token.value;
+        }
+
+        return `${prefix}${token.name}: ${capitalizeHex(
+          token.name.includes('spacing') ? rem(token.value) : token.value,
+        )};`;
       });
+
+      footer = `${footer}\n\n@media screen and (max-width: ${breakpoint}) {\n\t:root {\n`;
+      mobileFonts.forEach((mobileFont) => {
+        footer = `${footer}\t${mobileFont}\n`;
+      });
+      footer = `${footer}\t}\n}`;
 
       return `${header}${variables.join('\n')}${footer}`;
     },
