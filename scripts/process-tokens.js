@@ -18,7 +18,8 @@ const figmaTokens = readTokens(`${FIGMA_TOKENS_PATH}${FIGMA_TOKENS_FILE}`);
 
 const processedTokens = {};
 processedTokens.breakpoints = figmaTokens.breakpoints;
-processedTokens.color = figmaTokens.color;
+processedTokens.container = figmaTokens.container;
+processedTokens.spacing = figmaTokens.spacing;
 
 if (figmaTokens.effect && figmaTokens.effect.shadow) {
   processedTokens.shadow = {};
@@ -35,43 +36,35 @@ if (figmaTokens.effect && figmaTokens.effect.shadow) {
   }
 }
 
+const saveFontToken = (fontSize, lineHeight) => ({
+  value: {
+    fontSize,
+    lineHeight,
+  },
+});
+
 processedTokens.font = {};
 for (const groupName in figmaTokens.font) {
   for (const fontName in figmaTokens.font[groupName]) {
-    const font = figmaTokens.font[groupName][fontName];
-    const fontType = fontName.split(' | ');
-    console.log(fontType[0], font.value);
-    if (!processedTokens.font[fontType[0]]) {
-      processedTokens.font[fontType[0]] = {};
-    }
-    if (fontType.length === 1) {
-      processedTokens.font[fontType[0]] = {
-        desktop: {
-          value: {
-            size: font.value.fontSize,
-            weight: font.value.fontWeight,
-            lineHeight: font.value.lineHeight,
-          },
-        },
-        mobile: {
-          value: {
-            size: font.value.fontSize,
-            fontWeight: font.value.fontWeight,
-            lineHeight: font.value.lineHeight,
-          },
-        },
-      };
-    } else {
-      processedTokens.font[fontType[0]][fontType[1]] = {
-        value: {
-          size: font.value.fontSize,
-          weight: font.value.fontWeight,
-          lineHeight: font.value.lineHeight,
-        },
-      };
+    if (!fontName.includes('semi')) {
+      const font = figmaTokens.font[groupName][fontName];
+      const fontType = fontName.split(' | ');
+      if (!processedTokens.font[fontType[0]]) {
+        processedTokens.font[fontType[0]] = {};
+      }
+      if (fontType.length === 1) {
+        processedTokens.font[fontType[0]] = {
+          desktop: saveFontToken(font.value.fontSize, font.value.lineHeight),
+          mobile: saveFontToken(font.value.fontSize, font.value.lineHeight),
+        };
+      } else {
+        processedTokens.font[fontType[0]][fontType[1]] = saveFontToken(font.value.fontSize, font.value.lineHeight);
+      }
     }
   }
 }
+
+processedTokens.color = figmaTokens.color;
 
 const jsonTokens = fs.readdirSync(FIGMA_TOKENS_PATH);
 jsonTokens.forEach((json) => {
