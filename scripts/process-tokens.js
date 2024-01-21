@@ -17,47 +17,54 @@ const readTokens = (filePath) => {
 const figmaTokens = readTokens(`${FIGMA_TOKENS_PATH}${FIGMA_TOKENS_FILE}`);
 
 const processedTokens = {};
-processedTokens.color = figmaTokens.color;
+processedTokens.breakpoints = figmaTokens.breakpoints;
+processedTokens.container = figmaTokens.container;
+processedTokens.spacing = figmaTokens.spacing;
 
-processedTokens.grid = figmaTokens.grid;
-
-processedTokens.shadow = {};
-for (const groupName in figmaTokens.effect.shadow) {
-  const shadow = figmaTokens.effect.shadow[groupName];
-  if (!processedTokens.shadow[groupName]) {
-    processedTokens.shadow[groupName] = {};
+if (figmaTokens.effect && figmaTokens.effect.shadow) {
+  processedTokens.shadow = {};
+  for (const groupName in figmaTokens.effect.shadow) {
+    const shadow = figmaTokens.effect.shadow[groupName];
+    if (!processedTokens.shadow[groupName]) {
+      processedTokens.shadow[groupName] = {};
+    }
+    processedTokens.shadow[groupName] = {
+      description: shadow?.description,
+      type: shadow.type,
+      value: `${shadow.value.offsetX}px ${shadow.value.offsetY}px ${shadow.value.radius}px ${shadow.value.spread}px ${shadow.value.color}`,
+    };
   }
-  processedTokens.shadow[groupName] = {
-    description: shadow?.description,
-    type: shadow.type,
-    value: `${shadow.value.offsetX}px ${shadow.value.offsetY}px ${shadow.value.radius}px ${shadow.value.spread}px ${shadow.value.color}`,
-  };
 }
+
+const saveFontToken = (fontSize, lineHeight) => ({
+  value: {
+    fontSize,
+    lineHeight,
+  },
+});
 
 processedTokens.font = {};
 for (const groupName in figmaTokens.font) {
   for (const fontName in figmaTokens.font[groupName]) {
-    const font = figmaTokens.font[groupName][fontName];
-    const fontType = fontName.split(' | ');
-    if (!processedTokens.font[fontType[0]]) {
-      processedTokens.font[fontType[0]] = {};
-    }
-    if (fontType.length === 1) {
-      processedTokens.font[fontType[0]] = {
-        desktop: {
-          value: font.value,
-        },
-        mobile: {
-          value: font.value,
-        },
-      };
-    } else {
-      processedTokens.font[fontType[0]][fontType[1]] = {
-        value: font.value,
-      };
+    if (!fontName.includes('semi')) {
+      const font = figmaTokens.font[groupName][fontName];
+      const fontType = fontName.split(' | ');
+      if (!processedTokens.font[fontType[0]]) {
+        processedTokens.font[fontType[0]] = {};
+      }
+      if (fontType.length === 1) {
+        processedTokens.font[fontType[0]] = {
+          desktop: saveFontToken(font.value.fontSize, font.value.lineHeight),
+          mobile: saveFontToken(font.value.fontSize, font.value.lineHeight),
+        };
+      } else {
+        processedTokens.font[fontType[0]][fontType[1]] = saveFontToken(font.value.fontSize, font.value.lineHeight);
+      }
     }
   }
 }
+
+processedTokens.color = figmaTokens.color;
 
 const jsonTokens = fs.readdirSync(FIGMA_TOKENS_PATH);
 jsonTokens.forEach((json) => {

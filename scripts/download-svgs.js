@@ -9,6 +9,16 @@ axiosRetry(axios, { retries: 5 });
 
 const FIGMA_API_BASE_URL = 'https://api.figma.com';
 const SRC_FOLDER = './src/icons/downloaded/';
+const FIGMA_TOKENS_PATH = './src/tokens/';
+
+const componentToHex = (c) => {
+  var hex = c.toString(16);
+  return hex.length == 1 ? '0' + hex : hex;
+};
+
+const rgbToHex = (r, g, b) => {
+  return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+};
 
 const generateName = (text, separator = '-') => {
   text = text.replace(/^\s+|\s+$/g, ''); // trim
@@ -47,7 +57,10 @@ const generateApiData = () => {
 
 const getFileDataFromApi = async (apiHeaders) => {
   try {
-    return await axios.get(`${FIGMA_API_BASE_URL}/v1/files/${apiHeaders.FILE_KEY}/nodes?ids=${encodeURI(apiHeaders.NODE_ID)}`, apiHeaders.API_HEADERS);
+    return await axios.get(
+      `${FIGMA_API_BASE_URL}/v1/files/${apiHeaders.FILE_KEY}/nodes?ids=${encodeURI(apiHeaders.NODE_ID)}`,
+      apiHeaders.API_HEADERS,
+    );
   } catch (err) {
     console.log(errorTxt(`Error al cargar datos de la API de Figma: ${err}`));
     process.exit(9);
@@ -73,58 +86,103 @@ const parseFileData = (response, node_id) => {
     const frames = [];
     nodes
       .filter((item) => {
-        return item.type === 'FRAME' && item.children.length !== 0 && item.name !== 'UI - Por añadir a tokens';
+        return item.type === 'SECTION' && item.devStatus.type === 'READY_FOR_DEV';
       })
       .forEach((item) => {
         frames.push(item);
       });
 
-    let childNodes = [];
-    frames.forEach((item) => {
-      if (item.children && item.children[1] && item.children[1].children) {
-        if (item.name === 'Categorías oposiciones') {
-          item.children[1].children[0].children?.forEach((child) => {
-            child.children.forEach((subchild) => {
-              // subchild.parentFrameName = generateName(item.name);
-              subchild.parentFrameName = generateName(item.children[0].children[0].characters);
-              childNodes.push(subchild);
+    const categoryColors = { color: {} };
+    const iconsWithColors = [];
+    frames.forEach((frame) => {
+      if (frame.children) {
+        let categoryName = '';
+        if (frame.children[0] && frame.children[0].name === 'System / Heading' && frame.children[0].children) {
+          categoryName = generateName(frame.children[0].children[0].characters);
+        }
+        if (frame.children[1].children && frame.children[1].children[0].children) {
+          const components = frame.children[1].children[0].children;
+          components.forEach((component) => {
+            let iconName = '';
+            component.children.forEach((item) => {
+              if (item.name === 'Data' || item.name === 'System / Data') {
+                item.children.forEach((text) => {
+                  if (text.name === 'Modifier') {
+                    iconName = text.characters;
+                  }
+                });
+              }
             });
-          });
-        } else {
-          item.children[1].children[0].children?.forEach((child) => {
-            // child.parentFrameName = generateName(item.name);
-            child.parentFrameName = generateName(item.children[0].children[0].characters);
-            childNodes.push(child);
+            component.children.forEach((item) => {
+              if (
+                item.type !== 'TEXT' &&
+                iconName !== '' &&
+                item.name !== 'WA-Badge' &&
+                item.name !== 'Data' &&
+                item.name !== 'System / Heading Variant' &&
+                item.name !== 'System / Data' &&
+                item.name !== 'Frame 38'
+              ) {
+                const addIconData = (icon, iconName, categoryName) => {
+                  if (iconName.indexOf('_color') > -1) {
+                    iconName = iconName.split('_color').join('');
+                    iconsWithColors.push(generateName(iconName));
+                  }
+
+                  iconsData.push({
+                    id: icon.id,
+                    name: iconName,
+                    category: categoryName,
+                  });
+                };
+
+                if (categoryName === 'categories') {
+                  item.children.forEach((category) => {
+                    if (category.name.indexOf('Color-') > -1 || iconName === 'Comunidades Autónomas' && category.name === 'Content') {
+                      let color;
+                      if (iconName !== 'Comunidades Autónomas') {
+                        color = category.children[0].fills[0].color;
+                      } else {
+                        color = category.children[0].children[0].fills[0].color;
+                      }
+                      
+                      categoryColors.color.opposition = {
+                        ...categoryColors.color.opposition,
+                        ...{
+                          [generateName(iconName)]: {
+                            value: rgbToHex(
+                              Math.round(color.r * 255).toString(16),
+                              Math.round(color.g * 255).toString(16),
+                              Math.round(color.b * 255).toString(16),
+                            ),
+                          },
+                        },
+                      };
+                    } else {
+                      addIconData(category, iconName, categoryName);
+                    }
+                  });
+                } else {
+                  addIconData(item, iconName, categoryName);
+                }
+              }
+            });
           });
         }
       }
     });
 
-    const iconNodes = [];
-    childNodes = childNodes.filter((item) => {
-      
-      return item.type === 'FRAME' && (item.name.charAt(0) === '.' || item.name === 'Content') && item.name !== 'System / Heading Variant';
-    });
-
-    childNodes.forEach((item) => {
-      item.children.forEach((child) => {
-        if (child.name.indexOf('Iconos / Color-Oposiciones') === -1 && (child.type === 'INSTANCE' || child.type === 'COMPONENT')) {
-          child.parentFrameName = item.parentFrameName;
-          iconNodes.push(child);
-        }
-      });
-    });
-
-    iconNodes.forEach((item) => {
-      // console.log(item);
-      iconsData.push({
-        id: item.id,
-        name: item.name,
-        category: item.parentFrameName,
-      });
-    });
-
     console.log(`Encontrados ${iconsData.length} componentes en el nodo de la página ` + `${figmaPageName}`);
+
+    if (!fs.existsSync(FIGMA_TOKENS_PATH)) {
+      fs.mkdirSync(FIGMA_TOKENS_PATH, { recursive: true });
+    }
+    if (!fs.existsSync(SRC_FOLDER)) {
+      fs.mkdirSync(SRC_FOLDER, { recursive: true });
+    }
+
+    fs.writeFileSync(`${FIGMA_TOKENS_PATH}oppositions.json`, JSON.stringify(categoryColors));
+    fs.writeFileSync(`${SRC_FOLDER}icons-with-colors.txt`, iconsWithColors.join(','));
 
     return iconsData;
   } catch (err) {
@@ -140,12 +198,14 @@ const exportFigmaNodesAsFiles = async (apiData, nodes, format, scale) => {
 
   try {
     const response = await axios.get(
-      FIGMA_API_BASE_URL + `/v1/images/${apiData.FILE_KEY}` + `?ids=${iconDataIds.join(',')}&scale=1&format=svg&svg_simplify_stroke=false&use_absolute_bounds=false`,
-      apiData.API_HEADERS
+      FIGMA_API_BASE_URL +
+        `/v1/images/${apiData.FILE_KEY}` +
+        `?ids=${iconDataIds.join(',')}&scale=1&format=svg&svg_simplify_stroke=false&use_absolute_bounds=false`,
+      apiData.API_HEADERS,
     );
     return response.data.images;
   } catch (err) {
-    console.log(`Ha fallado la exporación de iconos con la API de Figma`);
+    console.log(`Ha fallado la exportación de iconos con la API de Figma`);
 
     if (err.response.data.status === 400) {
       console.log('Parámetro incorrecto');
@@ -211,7 +271,7 @@ const getSVGs = async (apiData, iconNodes) => {
       }
 
       return nodeItem;
-    })
+    }),
   );
 };
 
