@@ -2,7 +2,8 @@ name: Generate PR from Figma
 
 on:
   repository_dispatch:
-    types: update-tokens
+    types: 
+      - update-tokens
 run-name: Generate PR from Figma
 jobs:
   build:
