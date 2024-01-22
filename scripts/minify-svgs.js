@@ -7,25 +7,8 @@ import { parse, stringify } from 'svgson';
 
 const SRC_FOLDER = './src/icons/downloaded/';
 const OPTIMIZED_FOLDER = './dist/icons';
-const COLOR_EXCLUSIONS = [
-  'mastercard',
-  'paypal',
-  'stripe-purple',
-  'visa',
-  'facebook',
-  'instagram',
-  'linkedin',
-  'pinterest',
-  'twitter',
-  'twitter',
-  'youtube',
-  'doubt-on',
-  'marker-on',
-  'heart-on',
-];
 
 const args = process.argv.slice(2);
-console.log(args);
 
 if (!fs.existsSync(OPTIMIZED_FOLDER)) {
   fs.mkdirSync(OPTIMIZED_FOLDER, { recursive: true });
@@ -54,6 +37,9 @@ const minimizeIcons = (icons) => {
   if (icons.length > 0) {
     console.log(`Se va a minificar los siguientes iconos: \n${icons.join('\n')}`);
 
+    let iconsWithColors = fs.readFileSync(`${SRC_FOLDER}icons-with-colors.txt`, { encoding: 'utf8', flag: 'r' });
+    iconsWithColors = iconsWithColors.split(',');
+
     icons.forEach((file) => {
       console.log(`Optimizando el icono ${path.basename(file)}`);
       fs.readFile(file, (err, data) => {
@@ -62,6 +48,276 @@ const minimizeIcons = (icons) => {
         const fp = 3;
         const tp = 4;
 
+        let plugins = [
+          {
+            name: 'removeDoctype',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeXMLProcInst',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeComments',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeMetadata',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeEditorsNSData',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'cleanupAttrs',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'mergeStyles',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'inlineStyles',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'minifyStyles',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'cleanupIds',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeUselessDefs',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'cleanupNumericValues',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'convertColors',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+              currentColor: !iconsWithColors.includes(path.basename(file).split('.svg').join('')),
+            },
+          },
+          {
+            name: 'removeUnknownsAndDefaults',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeNonInheritableGroupAttrs',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeUselessStrokeAndFill',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'cleanupEnableBackground',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeHiddenElems',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeEmptyText',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'convertShapeToPath',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'moveElemsAttrsToGroup',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'moveGroupAttrsToElems',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'collapseGroups',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'convertPathData',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'convertEllipseToCircle',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'convertTransform',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeEmptyAttrs',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeEmptyContainers',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'mergePaths',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeUnusedNS',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'sortAttrs',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'sortDefsChildren',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeTitle',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeDesc',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeDimensions',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeStyleElement',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeScriptElement',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+          {
+            name: 'removeOffCanvasPaths',
+            params: {
+              transformPrecision: tp,
+              floatPrecision: fp,
+            },
+          },
+        ];
+
         const result = optimize(data, {
           path: file,
           multipass: true,
@@ -69,557 +325,7 @@ const minimizeIcons = (icons) => {
             indent: 2,
             pretty: true,
           },
-          plugins: [
-            /* {
-              name: 'cleanupAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupEnableBackground',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupListOfValues',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupNumericValues',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'collapseGroups',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertColors',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-                currentColor: !COLOR_EXCLUSIONS.includes(path.basename(file).split('.svg').join('')),
-              },
-            },
-            {
-              name: 'convertEllipseToCircle',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertPathData',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertShapeToPath',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertTransform',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'inlineStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'mergePaths',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'mergeStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'minifyStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'moveElemsAttrsToGroup',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'moveGroupAttrsToElems',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeComments',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeDesc',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeDimensions',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeDoctype',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEditorsNSData',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyContainers',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyText',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeHiddenElems',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeMetadata',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeNonInheritableGroupAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeOffCanvasPaths',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeScriptElement',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeStyleElement',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeTitle',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUnknownsAndDefaults',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUnusedNS',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUselessDefs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUselessStrokeAndFill',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeXMLProcInst',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'reusePaths',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'sortAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'sortDefsChildren',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            }, */
-
-            {
-              name: 'removeDoctype',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeXMLProcInst',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeComments',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeMetadata',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEditorsNSData',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'mergeStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'inlineStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'minifyStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'minifyStyles',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupIds',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUselessDefs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupNumericValues',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertColors',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-                currentColor: !COLOR_EXCLUSIONS.includes(path.basename(file).split('.svg').join('')),
-              },
-            },
-            {
-              name: 'removeUnknownsAndDefaults',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeNonInheritableGroupAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUselessStrokeAndFill',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'cleanupEnableBackground',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeHiddenElems',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyText',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertShapeToPath',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'moveElemsAttrsToGroup',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'moveGroupAttrsToElems',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'collapseGroups',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertPathData',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertEllipseToCircle',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'convertTransform',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeEmptyContainers',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'mergePaths',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeUnusedNS',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'sortAttrs',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'sortDefsChildren',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeTitle',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeDesc',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeDimensions',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeStyleElement',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeScriptElement',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-            {
-              name: 'removeOffCanvasPaths',
-              params: {
-                transformPrecision: tp,
-                floatPrecision: fp,
-              },
-            },
-          ],
+          plugins,
         });
 
         try {
@@ -634,6 +340,32 @@ const minimizeIcons = (icons) => {
               ...svgTree.attributes,
               class: `Icon Icon-${fileName.split('.svg').join('')}`,
             };
+
+            if (fileName === 'interior.svg') {
+              svgTree.children.forEach((children) => {
+                if (children.name === 'mask') {
+                  children.children.forEach((child) => {
+                    if (child.name === 'mask') {
+                      child.attributes.fill = '#fff';
+                    }
+                  });
+                }
+              });
+            }
+
+            if (fileName === 'check-circle.svg') {
+              svgTree.children.forEach((child) => {
+                if (child.attributes.stroke === 'currentColor') {
+                  child.attributes.stroke = 'white';
+                }
+              });
+            }
+
+            if (fileName === 'answer-all.svg') {
+              svgTree.children.forEach((child) => {
+                child.attributes.fill = 'currentColor';
+              });
+            }
 
             const updatedSvgContent = stringify(svgTree);
 
@@ -653,11 +385,12 @@ const readIcons = (directory, icons) => {
   icons = icons || [];
 
   files.forEach(function (file) {
-    if (fs.statSync(directory + '/' + file).isDirectory()) {
+    if (fs.statSync(`${directory}/${file}`).isDirectory()) {
       icons = readIcons(directory + file, icons);
     } else {
-      // icons.push(path.join(SRC_FOLDER, directory, '/', file));
-      icons.push(`${directory}/${file}`);
+      if (file.indexOf('.txt') === -1) {
+        icons.push(`${directory}/${file}`);
+      }
     }
   });
 

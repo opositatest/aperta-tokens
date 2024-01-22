@@ -1,22 +1,41 @@
+const capitalizeHex = (str) => {
+  if (isNaN(str) && str.indexOf('#') !== -1) {
+    const regexp = /#(([0-9a-fA-F]{2}){3,4}|([0-9a-fA-F]){3,4})/g;
+    const colors = str.match(regexp);
+    for (let i = 0; i < colors.length; i++) {
+      str = str.replace(colors[i], `${colors[i].toUpperCase()}`);
+    }
+  }
+  return str;
+};
+
+const rem = (px) => `${px / 16}rem`;
+
 module.exports = {
   source: [`./dist/tokens/tokens.json`],
   format: {
     aperta: function ({ dictionary, platform }) {
-      const capitalizeHex = (str) => {
-        if (isNaN(str) && str.indexOf('#') !== -1) {
-          const regexp = /#(([0-9a-fA-F]{2}){3,4}|([0-9a-fA-F]){3,4})/g;
-          const colors = str.match(regexp);
-          for (let i = 0; i < colors.length; i++) {
-            str = str.replace(colors[i], `${colors[i].toUpperCase()}`);
-          }
+      const convertFonts = (token) => {
+        const values = [];
+        for (const value in token.value) {
+          values.push(
+            `${prefix}${token.name}-${value}: ${capitalizeHex(
+              value === 'weight' ? token.value[value] : rem(token.value[value]),
+            )};`,
+          );
         }
-        return str;
+
+        return values.join('\n');
       };
 
       const convertToMultipleKeys = (token) => {
         const values = [];
         for (const value in token.value) {
-          values.push(`${prefix}${token.name}-${value}: ${capitalizeHex(token.value[value])};`);
+          values.push(
+            `${prefix}${token.name}-${value}: ${capitalizeHex(
+              token.name.includes('spacing') ? rem(token.value[value]) : token.value[value],
+            )};`,
+          );
         }
 
         return values.join('\n');
@@ -33,20 +52,54 @@ module.exports = {
         footer = '';
       }
 
-      console.log(dictionary.allTokens);
       const variables = dictionary.allTokens.map((token) => {
         if (typeof token.value === 'object') {
           if (platform.transformGroup === 'css') {
-            return convertToMultipleKeys(token);
-          } else if (platform.transformGroup === 'scss' && !Array.isArray(token.value)) {
+            if (token.path.includes('font')) {
+              return convertFonts(token);
+            } else {
+              return convertToMultipleKeys(token);
+            }
+          } else if (platform.transformGroup === 'scss') {
             return convertToMultipleKeys(token);
           }
         }
 
-        return `${prefix}${token.name}: ${capitalizeHex(token.value)};`;
+        return `${prefix}${token.name.split('oppositions-').join('')}: ${capitalizeHex(token.value,
+        )};`;
       });
 
       return `${header}${variables.join('\n')}${footer}`;
+    },
+    apertaJS: function ({ dictionary }) {
+      const prefix = 'export const ';
+      const header = `/**\n* Do not edit directly\n* Generated on ${new Date().toUTCString()}\n*/\n\n`;
+
+      const variables = dictionary.allTokens.map((token) => {
+        let value = token.value;
+
+        if (typeof token.value === 'string') {
+          value = `'${value}'`;
+        }
+
+        if (token.name.includes('COLOR_')) {
+          value = `${capitalizeHex(value)}`;
+        }
+
+        if (token.name.includes('SPACING')) {
+          value = `[${value}]`;
+        }
+
+        if (token.name.includes('FONT_')) {
+          value = JSON.stringify(value);
+        }
+
+        console.log(prefix, token.name.split('OPPOSITIONS_').join(''), value);
+
+        return `${prefix}${token.name.split('OPPOSITIONS_').join('')} = ${value};`;
+      });
+
+      return `${header}${variables.join('\n')}`;
     },
   },
   platforms: {
@@ -77,7 +130,7 @@ module.exports = {
       files: [
         {
           destination: 'tokens.js',
-          format: 'javascript/es6',
+          format: 'apertaJS',
         },
       ],
     },
