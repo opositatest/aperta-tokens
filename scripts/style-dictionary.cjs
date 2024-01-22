@@ -65,7 +65,8 @@ module.exports = {
           }
         }
 
-        return `${prefix}${token.name.split('oppositions-').join('')}: ${capitalizeHex(token.value,
+        return `${prefix}${token.name.split('oppositions-').join('').split('typography-').join('')}: ${capitalizeHex(
+          token.value,
         )};`;
       });
 
@@ -94,9 +95,7 @@ module.exports = {
           value = JSON.stringify(value);
         }
 
-        console.log(prefix, token.name.split('OPPOSITIONS_').join(''), value);
-
-        return `${prefix}${token.name.split('OPPOSITIONS_').join('')} = ${value};`;
+        return `${prefix}${token.name.split('OPPOSITIONS_').join('').split('TYPOGRAPHY_').join('')} = ${value};`;
       });
 
       return `${header}${variables.join('\n')}`;
