@@ -4,68 +4,14 @@ import axiosRetry from 'axios-retry';
 import * as dotenv from 'dotenv';
 dotenv.config();
 dotenv.config({ path: `.env.local`, override: true });
+import _ from 'lodash';
+import { rgbToHex, generateApiData, getFileDataFromApi } from './functions';
 
 axiosRetry(axios, { retries: 5 });
 
 const FIGMA_API_BASE_URL = 'https://api.figma.com';
 const SRC_FOLDER = './src/icons/downloaded/';
 const FIGMA_TOKENS_PATH = './src/tokens/';
-
-const componentToHex = (c) => {
-  var hex = c.toString(16);
-  return hex.length == 1 ? '0' + hex : hex;
-};
-
-const rgbToHex = (r, g, b) => {
-  return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
-};
-
-const generateName = (text, separator = '-') => {
-  text = text.replace(/^\s+|\s+$/g, ''); // trim
-  text = text.toLowerCase();
-
-  var from = 'àáäâèéëêìíïîòóöôùúüûçěščřžýúůďťň·/_,:;';
-  var to = 'aaaaeeeeiiiioooouuuucescrzyuudtn------';
-
-  for (var i = 0, l = from.length; i < l; i++) {
-    text = text.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-  }
-
-  text = text
-    .replace('.', `${separator}`)
-    .replace(/[^a-z0-9 -]/g, '')
-    .replace(/\s+/g, `${separator}`)
-    .replace(/-+/g, `${separator}`)
-    .replace(/\//g, '');
-
-  return text;
-};
-
-const generateApiData = () => {
-  const figmaUrl = new URL(process.env.FIGMA_FILE_URL);
-
-  return {
-    API_HEADERS: {
-      headers: {
-        'X-FIGMA-TOKEN': process.env.FIGMA_PERSONAL_ACCESS_TOKEN,
-      },
-    },
-    FILE_KEY: figmaUrl.pathname.split('/')[2],
-    NODE_ID: figmaUrl.searchParams.get('node-id'),
-  };
-};
-
-const getFileDataFromApi = async (apiHeaders) => {
-  try {
-    return await axios.get(
-      `${FIGMA_API_BASE_URL}/v1/files/${apiHeaders.FILE_KEY}/nodes?ids=${encodeURI(apiHeaders.NODE_ID)}`,
-      apiHeaders.API_HEADERS,
-    );
-  } catch (err) {
-    console.log(errorTxt(`Error al cargar datos de la API de Figma: ${err}`));
-    process.exit(9);
-  }
-};
 
 const parseFileData = (response, node_id) => {
   if (response.status === 404) {
@@ -98,7 +44,7 @@ const parseFileData = (response, node_id) => {
       if (frame.children) {
         let categoryName = '';
         if (frame.children[0] && frame.children[0].name === 'System / Heading' && frame.children[0].children) {
-          categoryName = generateName(frame.children[0].children[0].characters);
+          categoryName = _.kebabCase(frame.children[0].children[0].characters);
         }
         if (frame.children[1].children && frame.children[1].children[0].children) {
           const components = frame.children[1].children[0].children;
@@ -126,7 +72,7 @@ const parseFileData = (response, node_id) => {
                 const addIconData = (icon, iconName, categoryName) => {
                   if (iconName.indexOf('_color') > -1) {
                     iconName = iconName.split('_color').join('');
-                    iconsWithColors.push(generateName(iconName));
+                    iconsWithColors.push(_.kebabCase(iconName));
                   }
 
                   iconsData.push({
@@ -138,18 +84,21 @@ const parseFileData = (response, node_id) => {
 
                 if (categoryName === 'categories') {
                   item.children.forEach((category) => {
-                    if (category.name.indexOf('Color-') > -1 || iconName === 'Comunidades Autónomas' && category.name === 'Content') {
+                    if (
+                      category.name.indexOf('Color-') > -1 ||
+                      (iconName === 'Comunidades Autónomas' && category.name === 'Content')
+                    ) {
                       let color;
                       if (iconName !== 'Comunidades Autónomas') {
                         color = category.children[0].fills[0].color;
                       } else {
                         color = category.children[0].children[0].fills[0].color;
                       }
-                      
+
                       categoryColors.color.opposition = {
                         ...categoryColors.color.opposition,
                         ...{
-                          [generateName(iconName)]: {
+                          [_.kebabCase(iconName)]: {
                             value: rgbToHex(
                               Math.round(color.r * 255).toString(16),
                               Math.round(color.g * 255).toString(16),
@@ -247,7 +196,7 @@ const getSVGs = async (apiData, iconNodes) => {
   return Promise.all(
     iconNodes.map(async (nodeItem) => {
       if (nodeItem.url) {
-        const svgName = generateName(nodeItem.name);
+        const svgName = _.kebabCase(nodeItem.name);
         try {
           const svgFileResponse = await axios.get(nodeItem.url, apiData.API_HEADERS);
           console.log(`Descargado ${svgName}.svg`);
