@@ -1,0 +1,32 @@
+{
+  "color": {
+    "opposition": {
+      "abogacia": { "value": "var(--color-aditional-18)" },
+      "administracion-general-del-estado": { "value": "var(--color-aditional-05)" },
+      "ayuntamientos-y-corporaciones-locales": { "value": "var(--color-aditional-21)" },
+      "bibliotecas": { "value": "var(--color-aditional-21)" },
+      "c-generales": { "value": "var(--color-aditional-06)" },
+      "comunidades-autonomas": { "value": "var(--color-aditional-17)" },
+      "correos": { "value": "var(--color-aditional-01)" },
+      "emt": { "value": "var(--color-aditional-11)" },
+      "ejercito": { "value": "var(--color-aditional-11)" },
+      "fuerzas-y-cuerpos-de-seguridad": { "value": "var(--color-aditional-13)" },
+      "gestores-administrativos": { "value": "var(--color-aditional-12)" },
+      "hacienda": { "value": "var(--color-aditional-09)" },
+      "interior": { "value": "var(--color-aditional-04)" },
+      "jueces-y-fiscales": { "value": "var(--color-aditional-02)" },
+      "justicia": { "value": "var(--color-aditional-03)" },
+      "medioambiente": { "value": "var(--color-aditional-17)" },
+      "psicotecnicos": { "value": "var(--color-aditional-08)" },
+      "sanidad-celadores": { "value": "var(--color-aditional-20)" },
+      "sanidad-auxiliares-enfermeria": { "value": "var(--color-aditional-20)" },
+      "sanidad-cuerpos-administrativos": { "value": "var(--color-aditional-20)" },
+      "sanidad-otras-categorias": { "value": "var(--color-aditional-20)" },
+      "sanidad-legislacion": { "value": "var(--color-aditional-20)" },
+      "seguridad-social": { "value": "var(--color-aditional-17)" },
+      "test-legislacion": { "value": "var(--color-aditional-12)" },
+      "universidades": { "value": "var(--color-aditional-12)" },
+      "informatica-y-ofimatica": { "value": "var(--color-aditional-23)" }
+    }
+  }
+}

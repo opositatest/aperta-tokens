@@ -65,7 +65,7 @@ module.exports = {
           }
         }
 
-        return `${prefix}${token.name.split('oppositions-').join('').split('typography-').join('')}: ${capitalizeHex(
+        return `${prefix}${token.name.split('related-vars-').join('').split('typography-').join('')}: ${capitalizeHex(
           token.value,
         )};`;
       });
