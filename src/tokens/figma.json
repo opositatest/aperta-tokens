@@ -682,13 +682,7 @@
       "wide": {
         "description": null,
         "type": "custom-grid",
-        "value": {
-          "pattern": "columns",
-          "sectionSize": 64,
-          "gutterSize": 24,
-          "alignment": "center",
-          "count": 12
-        },
+        "value": { "pattern": "columns", "sectionSize": 64, "gutterSize": 24, "alignment": "center", "count": 12 },
         "extensions": {
           "org.lukasoppermann.figmaDesignTokens": {
             "styleId": "S:b011904857c4d2364c997693ab1d31429d356926,",
@@ -699,13 +693,7 @@
       "medium": {
         "description": null,
         "type": "custom-grid",
-        "value": {
-          "pattern": "columns",
-          "sectionSize": 64,
-          "gutterSize": 24,
-          "alignment": "center",
-          "count": 10
-        },
+        "value": { "pattern": "columns", "sectionSize": 64, "gutterSize": 24, "alignment": "center", "count": 10 },
         "extensions": {
           "org.lukasoppermann.figmaDesignTokens": {
             "styleId": "S:3bdb9cc3662b75c4d0af076e958aaa5f475b1d14,",
@@ -716,13 +704,7 @@
       "narrow": {
         "description": null,
         "type": "custom-grid",
-        "value": {
-          "pattern": "columns",
-          "sectionSize": 64,
-          "gutterSize": 24,
-          "alignment": "center",
-          "count": 8
-        },
+        "value": { "pattern": "columns", "sectionSize": 64, "gutterSize": 24, "alignment": "center", "count": 8 },
         "extensions": {
           "org.lukasoppermann.figmaDesignTokens": {
             "styleId": "S:144a0593e000d9b417f797761807d5a62e3264d6,",
@@ -735,23 +717,11 @@
       "16": {
         "0": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "rows",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 16
-          }
+          "value": { "pattern": "rows", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 16 }
         },
         "1": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "columns",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 16
-          }
+          "value": { "pattern": "columns", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 16 }
         },
         "description": null,
         "extensions": {
@@ -764,23 +734,11 @@
       "24": {
         "0": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "rows",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 24
-          }
+          "value": { "pattern": "rows", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 24 }
         },
         "1": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "columns",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 24
-          }
+          "value": { "pattern": "columns", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 24 }
         },
         "description": null,
         "extensions": {
@@ -793,23 +751,11 @@
       "24, 16 - vert": {
         "0": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "columns",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 24
-          }
+          "value": { "pattern": "columns", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 24 }
         },
         "1": {
           "type": "custom-grid",
-          "value": {
-            "pattern": "columns",
-            "gutterSize": 0,
-            "alignment": "stretch",
-            "count": 1,
-            "offset": 16
-          }
+          "value": { "pattern": "columns", "gutterSize": 0, "alignment": "stretch", "count": 1, "offset": 16 }
         },
         "description": null,
         "extensions": {
@@ -1135,7 +1081,7 @@
       }
     },
     "heading": {
-      "xl desktop": {
+      "xl | desktop": {
         "type": "custom-fontStyle",
         "value": {
           "fontSize": 32,
@@ -1179,7 +1125,7 @@
           }
         }
       },
-      "xl mobile": {
+      "xl | mobile": {
         "type": "custom-fontStyle",
         "value": {
           "fontSize": 22,
@@ -1720,7 +1666,7 @@
       }
     },
     "heading": {
-      "xl desktop": {
+      "xl | desktop": {
         "fontSize": { "type": "dimension", "value": 32 },
         "textDecoration": { "type": "string", "value": "none" },
         "fontFamily": { "type": "string", "value": "IBM Plex Sans" },
@@ -1746,7 +1692,7 @@
         "paragraphSpacing": { "type": "dimension", "value": 0 },
         "textCase": { "type": "string", "value": "none" }
       },
-      "xl mobile": {
+      "xl | mobile": {
         "fontSize": { "type": "dimension", "value": 22 },
         "textDecoration": { "type": "string", "value": "none" },
         "fontFamily": { "type": "string", "value": "IBM Plex Sans" },
