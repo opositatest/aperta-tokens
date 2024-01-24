@@ -130,7 +130,7 @@ const parseFileData = (response, node_id) => {
       fs.mkdirSync(SRC_FOLDER, { recursive: true });
     }
 
-    fs.writeFileSync(`${FIGMA_TOKENS_PATH}oppositions.json`, JSON.stringify(categoryColors));
+    fs.writeFileSync(`${FIGMA_TOKENS_PATH}relatedvars.json`, JSON.stringify(categoryColors));
     fs.writeFileSync(`${SRC_FOLDER}icons-with-colors.txt`, iconsWithColors.join(','));
 
     return iconsData;

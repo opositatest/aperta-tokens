@@ -64,7 +64,14 @@ for (const groupName in figmaTokens.font) {
   }
 }
 
-processedTokens.color = figmaTokens.color;
+processedTokens.color = {};
+for (const groupName in figmaTokens.color) {
+  const colorName = figmaTokens.color[groupName];
+  for (const key in colorName) {
+    const newKey = `${groupName}-${key}`;
+    processedTokens.color[newKey] = { value: colorName[key].value };
+  }
+}
 
 const jsonTokens = fs.readdirSync(FIGMA_TOKENS_PATH);
 jsonTokens.forEach((json) => {
