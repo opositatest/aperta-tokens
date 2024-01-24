@@ -138,14 +138,17 @@ const parseFileData = (response, node_id) => {
 
                 if (categoryName === 'categories') {
                   item.children.forEach((category) => {
-                    if (category.name.indexOf('Color-') > -1 || iconName === 'Comunidades Autónomas' && category.name === 'Content') {
+                    if (
+                      category.name.indexOf('Color-') > -1 ||
+                      (iconName === 'Comunidades Autónomas' && category.name === 'Content')
+                    ) {
                       let color;
                       if (iconName !== 'Comunidades Autónomas') {
                         color = category.children[0].fills[0].color;
                       } else {
                         color = category.children[0].children[0].fills[0].color;
                       }
-                      
+
                       categoryColors.color.opposition = {
                         ...categoryColors.color.opposition,
                         ...{
@@ -181,7 +184,7 @@ const parseFileData = (response, node_id) => {
       fs.mkdirSync(SRC_FOLDER, { recursive: true });
     }
 
-    fs.writeFileSync(`${FIGMA_TOKENS_PATH}oppositions.json`, JSON.stringify(categoryColors));
+    fs.writeFileSync(`${FIGMA_TOKENS_PATH}relatedvars.json`, JSON.stringify(categoryColors));
     fs.writeFileSync(`${SRC_FOLDER}icons-with-colors.txt`, iconsWithColors.join(','));
 
     return iconsData;
