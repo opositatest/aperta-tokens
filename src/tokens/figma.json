@@ -77,7 +77,7 @@
       }
     },
     "notifications": {
-      "notifications": {
+      "main": {
         "description": "",
         "type": "color",
         "value": "#59b3b3ff",
@@ -89,7 +89,7 @@
           }
         }
       },
-      "notifications-hover": {
+      "main-hover": {
         "description": "",
         "type": "color",
         "value": "#88cbcaff",
@@ -101,7 +101,7 @@
           }
         }
       },
-      "notifications-light": {
+      "light": {
         "description": "",
         "type": "color",
         "value": "#d3e8e3ff",
@@ -113,7 +113,7 @@
           }
         }
       },
-      "notifications-dark": {
+      "dark": {
         "description": "",
         "type": "color",
         "value": "#227093ff",
@@ -127,7 +127,7 @@
       }
     },
     "challenge": {
-      "challenge": {
+      "main": {
         "description": "",
         "type": "color",
         "value": "#6874e8ff",
@@ -139,7 +139,7 @@
           }
         }
       },
-      "challenge-light": {
+      "light": {
         "description": "",
         "type": "color",
         "value": "#dcdefaff",
@@ -151,7 +151,7 @@
           }
         }
       },
-      "challenge-dark": {
+      "dark": {
         "description": "",
         "type": "color",
         "value": "#1f2fccff",
