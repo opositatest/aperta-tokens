@@ -1,8 +1,8 @@
+const axios = require('axios');
+
 const FIGMA_API_BASE_URL = 'https://api.figma.com';
 const SRC_FOLDER = './src/icons/downloaded/';
 const FIGMA_TOKENS_PATH = './src/tokens/';
-
-const axios = require('axios');
 
 const componentToHex = (c) => {
   var hex = c.toString(16);
