@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+const fs = require('fs');
 
 const FIGMA_TOKENS_PATH = './src/tokens/';
 const FIGMA_TOKENS_FILE = 'figma.json';

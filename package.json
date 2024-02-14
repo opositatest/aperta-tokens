@@ -1,8 +1,7 @@
 {
   "name": "@opositatest/aperta-tokens",
-  "version": "1.0.17",
+  "version": "1.0.19",
   "author": "OpositaTest (https://opositatest.com/)",
-  "type": "module",
   "license": "UNLICENSED",
   "description": "OpositaTest Design System tokens",
   "homepage": "https://github.com/opositatest/aperta-tokens#readme",
@@ -24,13 +23,14 @@
     "package:minify-all-svgs": "node ./scripts/minify-svgs.js -folder",
     "package:minify-changed-svgs": "node ./scripts/minify-svgs.js",
     "package:process-tokens": "node ./scripts/process-tokens.js",
-    "package:style-dictionary": "style-dictionary build -c ./scripts/style-dictionary.cjs",
-    "package:prepare": "node ./scripts/prepare-distribution.cjs"
+    "package:style-dictionary": "style-dictionary build -c ./scripts/style-dictionary.js",
+    "package:prepare": "node ./scripts/prepare-distribution.js"
   },
   "devDependencies": {
     "axios": "^1.6.5",
     "axios-retry": "^4.0.0",
     "dotenv": "^16.3.1",
+    "lodash": "^4.7.15",
     "prettier": "^3.2.4",
     "style-dictionary": "^3.9.2",
     "svg-parser": "^2.0.4",

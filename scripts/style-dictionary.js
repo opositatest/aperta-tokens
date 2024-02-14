@@ -1,15 +1,4 @@
-const capitalizeHex = (str) => {
-  if (isNaN(str) && str.indexOf('#') !== -1) {
-    const regexp = /#(([0-9a-fA-F]{2}){3,4}|([0-9a-fA-F]){3,4})/g;
-    const colors = str.match(regexp);
-    for (let i = 0; i < colors.length; i++) {
-      str = str.replace(colors[i], `${colors[i].toUpperCase()}`);
-    }
-  }
-  return str;
-};
-
-const rem = (px) => `${px / 16}rem`;
+const { capitalizeHex, rem } = require('./functions.js');
 
 module.exports = {
   source: [`./dist/tokens/tokens.json`],
