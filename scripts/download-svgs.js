@@ -1,17 +1,13 @@
-import * as fs from 'fs';
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
-import * as dotenv from 'dotenv';
+const fs = require('fs');
+const axios = require('axios');
+const axiosRetry = require('axios-retry').default;
+const dotenv = require('dotenv');
 dotenv.config();
 dotenv.config({ path: `.env.local`, override: true });
-import _ from 'lodash';
-import { rgbToHex, generateApiData, getFileDataFromApi } from './functions';
+const _ = require('lodash');
+const { FIGMA_API_BASE_URL, SRC_FOLDER, FIGMA_TOKENS_PATH, rgbToHex, generateApiData, getFileDataFromApi } = require('./functions.js');
 
 axiosRetry(axios, { retries: 5 });
-
-const FIGMA_API_BASE_URL = 'https://api.figma.com';
-const SRC_FOLDER = './src/icons/downloaded/';
-const FIGMA_TOKENS_PATH = './src/tokens/';
 
 const parseFileData = (response, node_id) => {
   if (response.status === 404) {
@@ -225,7 +221,12 @@ const getSVGs = async (apiData, iconNodes) => {
 };
 
 const apiData = generateApiData();
-const fileData = await getFileDataFromApi(apiData);
-let iconsData = parseFileData(fileData, apiData.NODE_ID.split('-').join(':'));
-iconsData = await getUrlsForIcons(apiData, iconsData);
-await getSVGs(apiData, iconsData);
+getFileDataFromApi(apiData).then((fileData) => {
+  let iconsData = parseFileData(fileData, apiData.NODE_ID.split('-').join(':'));
+  getUrlsForIcons(apiData, iconsData).then((iconsData) => {
+    getSVGs(apiData, iconsData);
+  });
+});
+
+
+

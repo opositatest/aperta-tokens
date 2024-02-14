@@ -1,10 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as childProcess from 'child_process';
+const fs = require('fs');
+const path = require('path');
+const childProcess = require('child_process');
 const execSync = childProcess.execSync;
-import { optimize } from 'svgo';
-import { parse, stringify } from 'svgson';
-import _ from 'lodash';
+const { optimize } = require('svgo');
+const { parse, stringify } = require('svgson');
+const _ = require('lodash');
 
 const SRC_FOLDER = './src/icons/downloaded/';
 const OPTIMIZED_FOLDER = './dist/icons';
@@ -410,6 +410,7 @@ const generateImportsFile = (icons) => {
 
   const exportsArray = [];
   const importsArray = [];
+  const classNames = [];
   let actualFolder = '';
   readedIcons.forEach((icon) => {
     const fileName = path.basename(icon);
@@ -419,15 +420,23 @@ const generateImportsFile = (icons) => {
     if (folder !== actualFolder) {
       importsArray.push(`// folder: /${folder}`);
     }
+
+    let convertedClassName = _.upperFirst(_.camelCase(className));
+    let repetitions = 1;
+    while(classNames.includes(convertedClassName)) {
+      repetitions++;
+      convertedClassName = `${convertedClassName}${repetitions}`;
+    }
+    classNames.push(convertedClassName);
     importsArray.push(
-      `import ${_.upperFirst(_.camelCase(className))} from '@opositatest/aperta-tokens/icons/${folder}${fileName}';`,
+      `import ${convertedClassName} from '@opositatest/aperta-tokens/icons/${folder}${fileName}';`,
     );
 
-    exportsArray.push(`\t${_.camelCase(className)}: ${_.upperFirst(_.camelCase(className))},`);
+    exportsArray.push(`\t${_.camelCase(convertedClassName)}: ${convertedClassName},`);
 
     actualFolder = folder;
   });
-  const importsExportsFile = `// @ts-nocheck\n${importsArray.join('\n')}\n\nconst icons = {\n${exportsArray.join('\n')}\n}\n`;
+  const importsExportsFile = `// @ts-nocheck\n${importsArray.join('\n')}\n\nconst icons = {\n${exportsArray.join('\n')}\n}\nexport default icons;\n`;
 
   fs.writeFile(`${OPTIMIZED_FOLDER}/icons.ts`, importsExportsFile, (error) => {
     if (error) {
