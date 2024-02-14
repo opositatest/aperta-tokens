@@ -4,6 +4,7 @@ import * as childProcess from 'child_process';
 const execSync = childProcess.execSync;
 import { optimize } from 'svgo';
 import { parse, stringify } from 'svgson';
+import _ from 'lodash';
 
 const SRC_FOLDER = './src/icons/downloaded/';
 const OPTIMIZED_FOLDER = './dist/icons';
@@ -401,13 +402,49 @@ if (!fs.existsSync(OPTIMIZED_FOLDER)) {
   fs.mkdirSync(OPTIMIZED_FOLDER, { recursive: true });
 }
 
+const generateImportsFile = (icons) => {
+  const readedIcons = readIcons(SRC_FOLDER);
+  if (icons === undefined) {
+    icons = readedIcons;
+  }
+
+  const exportsArray = [];
+  const importsArray = [];
+  let actualFolder = '';
+  readedIcons.forEach((icon) => {
+    const fileName = path.basename(icon);
+    const folders = path.dirname(icon).split('/');
+    const folder = folders[folders.length - 1] !== 'downloaded' ? `${folders[folders.length - 1]}/` : '';
+    const className = fileName.split('.svg').join('');
+    if (folder !== actualFolder) {
+      importsArray.push(`// folder: /${folder}`);
+    }
+    importsArray.push(
+      `import ${_.upperFirst(_.camelCase(className))} from '@opositatest/aperta-tokens/icons/${folder}${fileName}';`,
+    );
+
+    exportsArray.push(`\t${_.camelCase(className)}: ${_.upperFirst(_.camelCase(className))},`);
+
+    actualFolder = folder;
+  });
+  const importsExportsFile = `// @ts-nocheck\n${importsArray.join('\n')}\n\nconst icons = {\n${exportsArray.join('\n')}\n}\n`;
+
+  fs.writeFile(`${OPTIMIZED_FOLDER}/icons.ts`, importsExportsFile, (error) => {
+    if (error) {
+      console.log('Error al guardar el archivo de imports y exports');
+    }
+
+    minimizeIcons(icons);
+  });
+};
+
 if (args.includes('-folder')) {
-  minimizeIcons(readIcons(SRC_FOLDER));
+  generateImportsFile();
 } else {
   const modifiedFiles = execSync('git status --porcelain | cut -c 1-3 --complement')
     .toString()
     .split('\n')
     .filter((file) => file.includes('icons/downloaded') && file.endsWith('.svg'));
 
-  minimizeIcons(modifiedFiles);
+  generateImportsFile(modifiedFiles);
 }
