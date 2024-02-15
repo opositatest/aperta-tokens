@@ -385,7 +385,7 @@ const readIcons = (directory, icons) => {
 
   icons = icons || [];
 
-  files.forEach(function (file) {
+  files.forEach((file) => {
     if (fs.statSync(`${directory}/${file}`).isDirectory()) {
       icons = readIcons(directory + file, icons);
     } else {
