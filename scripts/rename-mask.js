@@ -3,16 +3,18 @@ const fs = require('fs');
 const SRC_FOLDER = './dist/icons/';
 
 const renameMask = (file) => {
-  const svgContent = fs.readFileSync(file, 'utf8');
+  let svgContent = fs.readFileSync(file, "utf8");
   const maskRandom = Math.floor(Math.random() * 99999999);
-  fs.writeFileSync(
-    file,
-    svgContent
-      .split('mask id="a"')
-      .join(`mask id="opo-mask-${maskRandom}"`)
-      .split('mask="url(#a)"')
-      .join(`mask="url(#opo-mask-${maskRandom})"`),
-  );
+
+  for (i = 97; i <= 122; i++) {
+    svgContent = svgContent
+      .split(`id="${String.fromCharCode(i)}"`)
+      .join(`id="opo-mask-${maskRandom}"`)
+      .split(`url(#${String.fromCharCode(i)})`)
+      .join(`url(#opo-mask-${maskRandom})`);
+  }
+
+  fs.writeFileSync(file, svgContent);
 };
 
 const readIcons = (directory) => {
