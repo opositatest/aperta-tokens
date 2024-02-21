@@ -330,7 +330,18 @@ const minimizeIcons = (icons) => {
         });
 
         try {
-          parse(result.data, {
+          let svgContent = result.data;
+          const maskRandom = Math.floor(Math.random() * 99999999);
+
+          for (i = 97; i <= 122; i++) {
+            svgContent = svgContent
+              .split(`id="${String.fromCharCode(i)}"`)
+              .join(`id="opo-mask-${maskRandom}"`)
+              .split(`url(#${String.fromCharCode(i)})`)
+              .join(`url(#opo-mask-${maskRandom})`);
+          }
+
+          parse(svgContent, {
             camelcase: false,
           }).then((svgTree) => {
             const fileName = path.basename(file);
@@ -423,14 +434,12 @@ const generateImportsFile = (icons) => {
 
     let convertedClassName = _.upperFirst(_.camelCase(className));
     let repetitions = 1;
-    while(classNames.includes(convertedClassName)) {
+    while (classNames.includes(convertedClassName)) {
       repetitions++;
       convertedClassName = `${convertedClassName}${repetitions}`;
     }
     classNames.push(convertedClassName);
-    importsArray.push(
-      `import ${convertedClassName} from '@opositatest/aperta-tokens/icons/${folder}${fileName}';`,
-    );
+    importsArray.push(`import ${convertedClassName} from '@opositatest/aperta-tokens/icons/${folder}${fileName}';`);
 
     exportsArray.push(`\t${_.camelCase(convertedClassName)}: ${convertedClassName},`);
 

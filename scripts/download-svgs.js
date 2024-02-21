@@ -63,7 +63,8 @@ const parseFileData = (response, node_id) => {
                 item.name !== 'Data' &&
                 item.name !== 'System / Heading Variant' &&
                 item.name !== 'System / Data' &&
-                item.name !== 'Frame 38'
+                item.name !== 'Frame 38' &&
+                item.name !== 'Frame 56'
               ) {
                 const addIconData = (icon, iconName, categoryName) => {
                   if (iconName.indexOf('_color') > -1) {
