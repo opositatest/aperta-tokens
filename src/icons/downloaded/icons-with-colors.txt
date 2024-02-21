@@ -1,1 +1,1 @@
-mastercard,paypal,stripe-black,stripe-purple,visa,answer-all,facebook,instagram,linkedin,pinterest,twitter,whatsapp,you-tube,doubt-off,doubt-on,heart-on,marker-on
+mastercard,paypal,stripe-black,stripe-purple,visa,answer-all,facebook,instagram,linkedin,pinterest,social-x,whatsapp,you-tube,doubt-off,doubt-on,heart-on,marker-on
