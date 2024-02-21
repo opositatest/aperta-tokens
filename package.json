@@ -20,8 +20,8 @@
   ],
   "scripts": {
     "package:download-svgs": "node ./scripts/download-svgs.js",
-    "package:minify-all-svgs": "node ./scripts/minify-svgs.js -folder && node ./scripts/rename-mask.js",
-    "package:minify-changed-svgs": "node ./scripts/minify-svgs.js && node ./scripts/rename-mask.js",
+    "package:minify-all-svgs": "node ./scripts/minify-svgs.js -folder",
+    "package:minify-changed-svgs": "node ./scripts/minify-svgs.js",
     "package:process-tokens": "node ./scripts/process-tokens.js",
     "package:style-dictionary": "style-dictionary build -c ./scripts/style-dictionary.js",
     "package:prepare": "node ./scripts/prepare-distribution.js"
