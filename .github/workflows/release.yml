@@ -10,7 +10,7 @@ env:
   FIGMA_PERSONAL_ACCESS_TOKEN: ${{ secrets.FIGMA_TOKEN }}
 jobs:
   release:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     name: Generate release and publish
     runs-on: ubuntu-latest
     steps:
