@@ -1,1 +1,1 @@
-mastercard,paypal,stripe-black,stripe-purple,visa,answer-all,facebook,instagram,linkedin,pinterest,social-x,whatsapp,you-tube,doubt-off,doubt-on,heart-on,marker-on
+aplazame,mastercard,paypal,stripe-black,stripe-purple,visa,answer-all,facebook,instagram,linkedin,pinterest,social-x,whatsapp,you-tube,doubt-off,doubt-on,heart-on,marker-on,preguntas-acertadas,preguntas-falladas,preguntas-en-blanco,usuario-ha-acertado,reto-cerrado,reto-inactivo,reto-activo
