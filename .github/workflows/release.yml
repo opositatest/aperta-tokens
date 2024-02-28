@@ -72,6 +72,12 @@ jobs:
           artifacts: 'aperta-tokens.zip'
           tag: "v${{ steps.package-version.outputs.current-version}}"
 
+      - name: Generate .npmrc
+        run: |
+          echo '//npm.pkg.github.com/:_authToken=${GH_OAUTH_TOKEN}' > dist/.npmrc
+          echo @opositatest:registry=https://npm.pkg.github.com > dist/.npmrc
+          echo always-auth=true >> dist/.npmrc
+
       - name: Publish package
         run: npm publish
         working-directory: ./dist
