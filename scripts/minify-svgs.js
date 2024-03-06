@@ -427,8 +427,13 @@ const generateImportsFile = (icons) => {
   const classNames = [];
   let actualFolder = '';
   readedIcons.forEach((icon) => {
-    const fileName = path.basename(icon);
+    let fileName = path.basename(icon);
     const folders = path.dirname(icon).split('/');
+
+    if (folders.includes('test-types')) {
+      fileName = `test-${fileName}`;
+    }
+    
     const folder = folders[folders.length - 1] !== 'downloaded' ? `${folders[folders.length - 1]}/` : '';
     const className = fileName.split('.svg').join('');
     if (folder !== actualFolder) {
