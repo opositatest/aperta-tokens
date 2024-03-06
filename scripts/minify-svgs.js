@@ -16,7 +16,10 @@ if (!fs.existsSync(OPTIMIZED_FOLDER)) {
 }
 
 const saveIcon = (file, data) => {
-  const fileName = path.basename(file);
+  let fileName = path.basename(file);
+  if (file.includes('test-types')) {
+    fileName = `test-${fileName}`;
+  }
 
   const folders = path.dirname(file).split('/');
   const savePath = `${OPTIMIZED_FOLDER}/${folders[folders.length - 1]}/`;
